@@ -1,43 +1,11 @@
+from configparser import ConfigParser
 import json
 
+
 def read_ini_file(file_path):
-    """
-    Reads a .ini file and returns its content as a dictionary.
-    
-    Args:
-    file_path (str): The path to the .ini file.
-
-    Returns:
-    dict: A dictionary representation of the .ini file.
-    """
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-
-    ini_data = {}
-    current_section = None
-
-    for line in lines:
-        line = line.strip()
-        # Remove comments from the line
-        comment_index = line.find(';')
-        if comment_index != -1:
-            line = line[:comment_index].strip()
-
-        # Skip if the line is empty after removing the comment
-        if not line:
-            continue
-
-        # Detect and handle new sections
-        if line.startswith('[') and line.endswith(']'):
-            current_section = line[1:-1]
-            ini_data[current_section] = {}
-        elif '=' in line and current_section:
-            # Split the line into key and value and clean them
-            key, value = line.split('=', 1)
-            value = value.replace('\t', '').strip()
-            ini_data[current_section][key.strip()] = value
-
-    return ini_data
+    ext_config = ConfigParser(strict=False)
+    ext_config.read(file_path)
+    return {section: dict(items for items in ext_config.items(section)) for section in ext_config.sections()}
 
 
 
@@ -53,7 +21,7 @@ def read_json_file(file_path):
     """
     with open(file_path, 'r') as file:
         return json.load(file)
-    
+
     
 
 def process_data(ini_data, json_template):
@@ -185,7 +153,7 @@ def process_single_sub_category(ini_data, sub_details, sub_category, category_re
     entry = sub_details.get("entry")
     entries = sub_details.get("entries", {})
     return_value = sub_details.get("return_value", False)
-    
+    print(ini_data)
     # Vérifie si les conditions dans 'entries' sont remplies
     for tag in tags:
         tag = tag.strip("[]")
