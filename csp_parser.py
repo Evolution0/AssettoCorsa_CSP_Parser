@@ -3,7 +3,8 @@ import json
 
 
 def read_ini_file(file_path):
-    ext_config = ConfigParser(strict=False)
+    ext_config = ConfigParser(strict=False, allow_no_value=True, empty_lines_in_values=False)
+    ext_config.optionxform = str
     ext_config.read(file_path)
     return {section: dict(items for items in ext_config.items(section)) for section in ext_config.sections()}
 
@@ -272,18 +273,18 @@ def check_entries(ini_data, tags, entries=None):
     return False
 
 
+if __name__ == '__main__':
+    # Paths for Cars and Tracks
+    # ini_file_path = './cars/ext_config.ini'
+    # json_file_path = './cars/car_csp.json'
+    # For Tracks
+    ini_file_path = './tracks/ext_config.ini'
+    json_file_path = './tracks/track_csp.json'
 
-# Paths for Cars and Tracks
-# ini_file_path = './cars/ext_config.ini'
-# json_file_path = './cars/car_csp.json'
-# For Tracks
-ini_file_path = './tracks/ext_config.ini'
-json_file_path = './tracks/track_csp.json'
+    # Read and process the data
+    ini_data = read_ini_file(ini_file_path)
+    json_template = read_json_file(json_file_path)
+    result = process_data(ini_data, json_template)
 
-# Read and process the data
-ini_data = read_ini_file(ini_file_path)
-json_template = read_json_file(json_file_path)
-result = process_data(ini_data, json_template)
-
-# Print the results
-print(json.dumps(result, indent=4))
+    # Print the results
+    print(json.dumps(result, indent=4))
